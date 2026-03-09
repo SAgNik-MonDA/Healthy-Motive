@@ -45,14 +45,21 @@ const Courses = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {courses.map((course) => (
                             <div key={course._id} className="bg-white dark:bg-darkCard rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group border border-transparent dark:border-gray-800 hover:border-accent dark:hover:border-primary">
-                                {/* Image Placeholder */}
+                                {/* Image logic */}
                                 <div className="w-full h-56 bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 overflow-hidden relative">
-                                    <span className="z-10">[ Image: {course.title} ]</span>
+                                    {course.imageUrl ? (
+                                        <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="z-10">[ Image: {course.title} ]</span>
+                                    )}
                                     <div className="absolute inset-0 bg-primary dark:bg-accent opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                                 </div>
                                 <div className="p-6 flex-1 flex flex-col">
                                     <div className="flex items-center gap-1 mb-3 text-yellow-400 text-sm">
-                                        ★★★★★ <span className="text-gray-500 dark:text-gray-400 text-xs ml-2">({course.numReviews})</span>
+                                        ★★★★★
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs ml-2 font-medium">({course.numReviews} Reviews)</span>
+                                        <span className="text-gray-300 dark:text-gray-600 mx-1">•</span>
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs font-semibold">{course.enrolledStudents || 0} Enrolled</span>
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary dark:group-hover:text-accent transition-colors">{course.title}</h3>
                                     <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-1 leading-relaxed">{course.description}</p>

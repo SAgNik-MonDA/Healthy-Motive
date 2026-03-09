@@ -1,11 +1,16 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 
 export const AuthContext = createContext();
+
+// Connect to the backend
+const socket = io('http://localhost:5000', { autoConnect: false });
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [onlineUsers, setOnlineUsers] = useState([]);
 
     useEffect(() => {
         const userInfo = sessionStorage.getItem('userInfo');
@@ -13,7 +18,24 @@ export const AuthProvider = ({ children }) => {
             setUser(JSON.parse(userInfo));
         }
         setLoading(false);
+
+        // Socket setup
+        socket.connect();
+        socket.on('online_users', (users) => {
+            setOnlineUsers(users);
+        });
+
+        return () => {
+            socket.off('online_users');
+            socket.disconnect();
+        };
     }, []);
+
+    useEffect(() => {
+        if (user && user._id) {
+            socket.emit('register_user', user._id);
+        }
+    }, [user]);
 
     const login = async (email, password) => {
         try {
@@ -76,7 +98,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, googleLogin, logout, updateProfile, loading }}>
+        <AuthContext.Provider value={{ user, login, register, googleLogin, logout, updateProfile, loading, onlineUsers }}>
             {children}
         </AuthContext.Provider>
     );

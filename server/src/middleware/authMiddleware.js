@@ -27,3 +27,22 @@ export const protect = async (req, res, next) => {
         return next(new Error('Not authorized, no token'));
     }
 };
+
+export const admin = (req, res, next) => {
+    // Keep backward compatibility
+    if (req.user && (req.user.isAdmin || req.user.role === 'admin')) {
+        next();
+    } else {
+        res.status(401);
+        next(new Error('Not authorized as an admin'));
+    }
+};
+
+export const isAdmin = (req, res, next) => {
+    if (req.user && (req.user.role === 'admin' || req.user.isAdmin)) {
+        next();
+    } else {
+        res.status(403);
+        next(new Error('Not authorized as an admin'));
+    }
+};

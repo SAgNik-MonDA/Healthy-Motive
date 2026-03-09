@@ -16,14 +16,14 @@ const storage = multer.diskStorage({
 
 // Check file type
 function checkFileType(file, cb) {
-    const filetypes = /jpg|jpeg|png/;
+    const filetypes = /jpg|jpeg|png|webp|gif|pdf|doc|docx|mp3|wav|mpeg|mp4|m4a/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 
-    if (extname && mimetype) {
+    if (extname || mimetype) {
         return cb(null, true);
     } else {
-        cb('Images only!');
+        cb('Unsupported file format!');
     }
 }
 
@@ -36,11 +36,12 @@ const upload = multer({
 });
 
 // Route
-router.post('/', upload.single('image'), (req, res) => {
-    // req.file.path returns "uploads\image-12345.jpg" (on windows)
-    // we should format it consistently.
-    const imagePath = `/${req.file.path.replace(/\\/g, '/')}`;
-    res.send({ message: 'Image uploaded successfully', image: imagePath });
+router.post('/', upload.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).send({ message: 'No file uploaded' });
+    }
+    const filePath = `/${req.file.path.replace(/\\/g, '/')}`;
+    res.send({ message: 'File uploaded successfully', file: filePath });
 });
 
 export default router;

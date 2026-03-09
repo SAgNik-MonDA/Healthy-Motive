@@ -2,6 +2,18 @@ import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import axios from 'axios';
 
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private/Admin
+export const getUsers = async (req, res, next) => {
+    try {
+        const users = await User.find({});
+        res.json(users);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
@@ -18,6 +30,7 @@ export const authUser = async (req, res, next) => {
                 middleName: user.middleName,
                 lastName: user.lastName,
                 email: user.email,
+                role: user.role,
                 isAdmin: user.isAdmin,
                 address: user.address,
                 profilePicture: user.profilePicture,
@@ -64,6 +77,7 @@ export const registerUser = async (req, res, next) => {
                 middleName: user.middleName,
                 lastName: user.lastName,
                 email: user.email,
+                role: user.role,
                 isAdmin: user.isAdmin,
                 address: user.address,
                 profilePicture: user.profilePicture,
@@ -111,6 +125,7 @@ export const updateUserProfile = async (req, res, next) => {
                 middleName: updatedUser.middleName,
                 lastName: updatedUser.lastName,
                 email: updatedUser.email,
+                role: updatedUser.role,
                 isAdmin: updatedUser.isAdmin,
                 address: updatedUser.address,
                 profilePicture: updatedUser.profilePicture,
@@ -155,6 +170,7 @@ export const authGoogle = async (req, res, next) => {
                 middleName: user.middleName,
                 lastName: user.lastName,
                 email: user.email,
+                role: user.role,
                 isAdmin: user.isAdmin,
                 address: user.address,
                 profilePicture: user.profilePicture,
@@ -184,6 +200,7 @@ export const authGoogle = async (req, res, next) => {
                     middleName: user.middleName,
                     lastName: user.lastName,
                     email: user.email,
+                    role: user.role,
                     isAdmin: user.isAdmin,
                     address: user.address,
                     profilePicture: user.profilePicture,
@@ -202,5 +219,61 @@ export const authGoogle = async (req, res, next) => {
         console.error(error);
         res.status(401);
         next(new Error('Google authentication failed'));
+    }
+};
+
+// @desc    Promote user to admin
+// @route   PUT /api/users/promote/:id
+// @access  Private/Admin
+export const promoteUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (user) {
+            user.role = 'admin';
+            user.isAdmin = true; // Keep for backward compatibility
+
+            const updatedUser = await user.save();
+            res.json({
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                role: updatedUser.role,
+                isAdmin: updatedUser.isAdmin,
+            });
+        } else {
+            res.status(404);
+            throw new Error('User not found');
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Demote admin to user
+// @route   PUT /api/users/demote/:id
+// @access  Private/Admin
+export const demoteUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (user) {
+            user.role = 'user';
+            user.isAdmin = false; // Keep for backward compatibility
+
+            const updatedUser = await user.save();
+            res.json({
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                role: updatedUser.role,
+                isAdmin: updatedUser.isAdmin,
+            });
+        } else {
+            res.status(404);
+            throw new Error('User not found');
+        }
+    } catch (error) {
+        next(error);
     }
 };

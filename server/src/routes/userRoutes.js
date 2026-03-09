@@ -1,8 +1,12 @@
 import express from 'express';
-import { authUser, registerUser, updateUserProfile, authGoogle } from '../controllers/userController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { authUser, registerUser, updateUserProfile, authGoogle, getUsers, promoteUser, demoteUser } from '../controllers/userController.js';
+import { protect, admin, isAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+
+router.route('/').get(protect, admin, getUsers);
+router.route('/promote/:id').put(protect, isAdmin, promoteUser);
+router.route('/demote/:id').put(protect, isAdmin, demoteUser);
 
 router.post('/register', registerUser);
 router.post('/login', authUser);

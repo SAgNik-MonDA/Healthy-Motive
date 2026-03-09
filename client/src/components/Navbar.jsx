@@ -43,7 +43,8 @@ const Navbar = () => {
         { name: 'Home', path: '/' },
         { name: 'Courses', path: '/courses' },
         { name: 'E-Books', path: '/e-books' },
-        { name: 'Free Resources', path: '/e-books' }, // Alternatively some other page
+        { name: 'Guided Audios', path: '/guided-audios' },
+        { name: 'Free Resources', path: '/free-resources' },
         { name: 'About', path: '/about' },
         { name: 'Contact', path: '/contact' },
     ];
@@ -105,6 +106,22 @@ const Navbar = () => {
                                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
                                     </div>
                                     <div className="flex flex-col py-2">
+                                        {user.isAdmin && (
+                                            <Link
+                                                to="/admin"
+                                                onClick={() => setShowProfileMenu(false)}
+                                                className="px-4 py-3 text-sm font-bold text-primary dark:text-accent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800"
+                                            >
+                                                Admin Dashboard
+                                            </Link>
+                                        )}
+                                        <Link
+                                            to="/my-courses"
+                                            onClick={() => setShowProfileMenu(false)}
+                                            className="px-4 py-3 text-sm font-bold text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                        >
+                                            My Learning
+                                        </Link>
                                         <Link
                                             to="/profile"
                                             onClick={() => setShowProfileMenu(false)}
@@ -164,15 +181,49 @@ const Navbar = () => {
                             </Link>
                         ))}
                         {user ? (
-                            <button
-                                onClick={() => {
-                                    logout();
-                                    toggleMenu();
-                                }}
-                                className="mt-4 px-6 py-3 bg-red-600 text-white text-center rounded-full font-semibold hover:bg-opacity-90 transition-colors"
-                            >
-                                Logout
-                            </button>
+                            <>
+                                {user.isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        onClick={toggleMenu}
+                                        className="text-primary dark:text-accent font-bold text-lg border-b border-gray-100 dark:border-gray-800 pb-2 transition-colors"
+                                    >
+                                        Admin Dashboard
+                                    </Link>
+                                )}
+                                <Link
+                                    to="/my-courses"
+                                    onClick={toggleMenu}
+                                    className="text-gray-700 dark:text-gray-300 text-lg hover:text-primary dark:hover:text-accent font-bold border-b border-gray-100 dark:border-gray-800 pb-2 transition-colors pl-4"
+                                >
+                                    My Learning
+                                </Link>
+                                <Link
+                                    to="/profile"
+                                    onClick={toggleMenu}
+                                    className="flex items-center justify-center gap-3 text-gray-700 dark:text-gray-300 text-lg hover:text-primary dark:hover:text-accent font-medium border-b border-gray-100 dark:border-gray-800 pb-3 transition-colors"
+                                >
+                                    <span className="w-10 h-10 flex items-center justify-center bg-primary dark:bg-accent text-white dark:text-primary rounded-full overflow-hidden flex-shrink-0">
+                                        {user.profilePicture ? (
+                                            <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                                        ) : (
+                                            user.name.charAt(0).toUpperCase()
+                                        )}
+                                    </span>
+                                    <span>
+                                        My Profile {(!isProfileComplete) && <span className="ml-2 inline-block w-2 h-2 bg-red-500 rounded-full"></span>}
+                                    </span>
+                                </Link>
+                                <button
+                                    onClick={() => {
+                                        logout();
+                                        toggleMenu();
+                                    }}
+                                    className="mt-4 px-6 py-3 bg-red-600 text-white text-center rounded-full font-semibold hover:bg-opacity-90 transition-colors"
+                                >
+                                    Logout
+                                </button>
+                            </>
                         ) : (
                             <Link
                                 to="/login"

@@ -37,7 +37,7 @@ const Profile = () => {
     const uploadFileHandler = async (e) => {
         const file = e.target.files[0];
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('file', file);
         setUploading(true);
 
         try {
@@ -50,7 +50,7 @@ const Profile = () => {
             const { data } = await axios.post('/api/upload', formData, config);
 
             // Convert to a full absolute URL for the frontend
-            const fullImageUrl = `http://localhost:5000${data.image}`;
+            const fullImageUrl = `http://localhost:5000${data.file}`;
             setProfilePicture(fullImageUrl);
             setUploading(false);
         } catch (error) {
@@ -85,9 +85,11 @@ const Profile = () => {
     };
 
     return (
-        <div className="min-h-screen pt-32 pb-20 bg-background dark:bg-darkBg transition-colors duration-300">
-            <div className="container mx-auto px-6 max-w-3xl">
-                <h1 className="text-4xl md:text-5xl font-extrabold text-primary dark:text-accent mb-6">My Profile</h1>
+        <div className="min-h-screen pt-24 md:pt-32 pb-20 bg-background dark:bg-darkBg transition-colors duration-300">
+            <div className="container mx-auto px-6 max-w-3xl relative">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-primary dark:text-accent mb-8 text-center md:text-left md:ml-0 h-12 flex items-center justify-center md:justify-start">
+                    My Profile
+                </h1>
 
                 {!isProfileComplete && (
                     <div className="bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 p-5 rounded-xl mb-10 shadow-sm">

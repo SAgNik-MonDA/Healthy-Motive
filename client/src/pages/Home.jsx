@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Home = () => {
+    const [featuredCourses, setFeaturedCourses] = useState([]);
+
+    useEffect(() => {
+        const fetchFeaturedCourses = async () => {
+            try {
+                const { data } = await axios.get('/api/courses');
+                setFeaturedCourses(data.slice(0, 3)); // Display top 3 courses
+            } catch (err) {
+                console.error("Failed to fetch featured courses:", err);
+            }
+        };
+
+        fetchFeaturedCourses();
+    }, []);
+
     return (
         <div className="w-full min-h-screen flex flex-col pt-16">
 
@@ -57,9 +73,9 @@ const Home = () => {
                         {/* Offer Card 3 */}
                         <div className="group bg-background dark:bg-darkBg rounded-3xl p-8 hover:shadow-2xl transition-all duration-300 border border-transparent hover:border-accent dark:hover:border-primary">
                             <div className="w-16 h-16 bg-accent dark:bg-primary rounded-full flex items-center justify-center mb-6 text-primary dark:text-white text-2xl">🎧</div>
-                            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Guided Audio</h3>
+                            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Guided Audios</h3>
                             <p className="text-gray-600 dark:text-gray-400 mb-8">Relaxing and motivational audio sessions perfect for your daily commute or morning routine.</p>
-                            <Link to="/e-books" className="text-primary dark:text-accent font-semibold group-hover:underline flex items-center gap-2">
+                            <Link to="/guided-audios" className="text-primary dark:text-accent font-semibold group-hover:underline flex items-center gap-2">
                                 View More <span className="transform group-hover:translate-x-1 transition-transform">→</span>
                             </Link>
                         </div>
@@ -100,26 +116,32 @@ const Home = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {[1, 2, 3].map((item) => (
-                            <div key={item} className="bg-white dark:bg-darkCard rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col border border-gray-100 dark:border-gray-800">
-                                <div className="w-full h-56 bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400 dark:text-gray-500">
-                                    [ Image Placeholder ]
+                        {featuredCourses.length > 0 ? featuredCourses.map((course) => (
+                            <div key={course._id} className="bg-white dark:bg-darkCard rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col border border-gray-100 dark:border-gray-800">
+                                <div className="w-full h-56 bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400 dark:text-gray-500 overflow-hidden">
+                                    {course.imageUrl ? (
+                                        <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span>[ Image Placeholder ]</span>
+                                    )}
                                 </div>
                                 <div className="p-6 flex-1 flex flex-col">
                                     <div className="flex items-center gap-1 mb-3 text-yellow-400 text-sm">
-                                        ★★★★★ <span className="text-gray-500 dark:text-gray-400 text-xs ml-2">(120)</span>
+                                        ★★★★★ <span className="text-gray-500 dark:text-gray-400 text-xs ml-2">({course.numReviews || 0})</span>
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Finding Inner Peace</h3>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-1">A simple, effective course to calm your mind and reduce daily anxiety.</p>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{course.title}</h3>
+                                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-1 line-clamp-2">{course.description}</p>
                                     <div className="flex items-center justify-between mt-auto">
-                                        <span className="text-2xl font-bold text-primary dark:text-accent">$49</span>
-                                        <Link to={`/course/${item}`} className="px-4 py-2 bg-accent dark:bg-gray-800 text-primary dark:text-accent rounded-lg font-medium hover:bg-opacity-80 transition-colors">
+                                        <span className="text-2xl font-bold text-primary dark:text-accent">${course.price}</span>
+                                        <Link to={`/course/${course._id}`} className="px-4 py-2 bg-accent dark:bg-gray-800 text-primary dark:text-accent rounded-lg font-medium hover:bg-opacity-80 transition-colors">
                                             Details
                                         </Link>
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <div className="col-span-full py-10 text-center text-gray-500 font-medium">No top courses available at this time.</div>
+                        )}
                     </div>
                     <div className="mt-10 text-center sm:hidden">
                         <Link to="/courses" className="text-primary dark:text-accent font-medium hover:underline">View all courses →</Link>

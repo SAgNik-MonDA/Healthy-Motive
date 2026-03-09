@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user',
+    },
     isAdmin: {
         type: Boolean,
         required: true,
@@ -49,6 +54,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    enrolledCourses: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course',
+        },
+    ],
+    enrolledEbooks: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Ebook',
+        },
+    ],
 }, {
     timestamps: true,
 });

@@ -7,12 +7,22 @@ import Navbar from './components/Navbar';
 import FloatingChat from './components/FloatingChat';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminProtectedRoute from './components/AdminProtectedRoute';
+import BackButton from './components/BackButton';
 
 // Pages
 import Home from './pages/Home';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
+import PaymentPage from './pages/PaymentPage';
 import EBooks from './pages/EBooks';
+import EBookDetail from './pages/EBookDetail';
+import EBookPaymentPage from './pages/EBookPaymentPage';
+import FreeResources from './pages/FreeResources';
+import FreeResourceDetail from './pages/FreeResourceDetail';
+import GuidedAudios from './pages/GuidedAudios';
+import GuidedAudioDetail from './pages/GuidedAudioDetail';
+import GuidedAudioPaymentPage from './pages/GuidedAudioPaymentPage';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -21,6 +31,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Profile from './pages/Profile';
+import EnrolledCourses from './pages/EnrolledCourses';
+import AdminDashboard from './pages/AdminDashboard';
 
 // ScrollToTop Component to handle scrolling up on route change
 const ScrollToTop = () => {
@@ -52,6 +64,9 @@ const Layout = ({ children }) => {
 
       {/* Global Floating Chat */}
       {!isAuthPage && <FloatingChat />}
+
+      {/* Global Back Button */}
+      <BackButton />
     </div>
   );
 };
@@ -72,13 +87,27 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/my-courses" element={<EnrolledCourses />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/course/:id" element={<CourseDetail />} />
+              <Route path="/course/:id/payment" element={<PaymentPage />} />
               <Route path="/e-books" element={<EBooks />} />
+              <Route path="/e-book/:id" element={<EBookDetail />} />
+              <Route path="/e-book/:id/payment" element={<EBookPaymentPage />} />
+              <Route path="/free-resources" element={<FreeResources />} />
+              <Route path="/free-resource/:id" element={<FreeResourceDetail />} />
+              <Route path="/guided-audios" element={<GuidedAudios />} />
+              <Route path="/guided-audio/:id" element={<GuidedAudioDetail />} />
+              <Route path="/guided-audio/:id/payment" element={<GuidedAudioPaymentPage />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
+            </Route>
+
+            {/* Admin Routes */}
+            <Route element={<AdminProtectedRoute />}>
+              <Route path="/admin" element={<AdminDashboard />} />
             </Route>
 
             {/* Fallback for other routes */}

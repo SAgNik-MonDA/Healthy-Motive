@@ -1,5 +1,21 @@
 import mongoose from 'mongoose';
 
+const reviewSchema = mongoose.Schema(
+    {
+        name: { type: String, required: true },
+        rating: { type: Number, required: true },
+        comment: { type: String, required: true },
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'User',
+        },
+    },
+    {
+        timestamps: true,
+    }
+);
+
 const courseSchema = mongoose.Schema(
     {
         title: {
@@ -22,10 +38,19 @@ const courseSchema = mongoose.Schema(
             type: Number,
             default: 0,
         },
+        enrolledStudents: {
+            type: Number,
+            default: 0,
+        },
         benefits: [String],
-        // Store image URL from cloud storage in production
+        courseIncludes: [String],
+        reviews: [reviewSchema],
         imageUrl: {
             type: String,
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false,
         },
     },
     {
