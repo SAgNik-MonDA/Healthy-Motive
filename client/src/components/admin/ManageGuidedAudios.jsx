@@ -15,13 +15,19 @@ const PLACEHOLDERS = [
 const parseInclude = (str, index) => {
     const defaultIcon = ICONS[index % ICONS.length];
     if (!str) return { icon: defaultIcon, text: '' };
-    const firstChar = str.trim().codePointAt(0);
+
+    // Extract emoji and text
+    const trimmedStart = str.trimStart();
+    const firstChar = trimmedStart.codePointAt(0);
     if (firstChar && firstChar > 255) {
-        const spaceIdx = str.trim().indexOf(' ');
+        const spaceIdx = trimmedStart.indexOf(' ');
         if (spaceIdx !== -1 && spaceIdx <= 7) {
-            return { icon: str.trim().substring(0, spaceIdx), text: str.trim().substring(spaceIdx + 1).trim() };
-        } else if (spaceIdx === -1 && str.trim().length <= 3) {
-            return { icon: str.trim(), text: '' };
+            return {
+                icon: trimmedStart.substring(0, spaceIdx),
+                text: trimmedStart.substring(spaceIdx + 1)
+            };
+        } else if (spaceIdx === -1 && trimmedStart.trim().length <= 3) {
+            return { icon: trimmedStart.trim(), text: '' };
         }
     }
     return { icon: defaultIcon, text: str };
